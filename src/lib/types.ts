@@ -75,6 +75,8 @@ export interface NotificationProps {
 
 export type ProductType = {
   id?: string;
+  nation?:  string;
+  ismok?:  boolean;
   name?: string;
   src?: string;
   image?: string;
@@ -105,7 +107,9 @@ export interface StatsProps {
   popoverTitle?: string;
   popoverDesc?: Snippet;
   tab1Title?: string;
-  tab2Title?: string;
+  tab2Title?: string;  
+  tab3Title?: string;
+  tab4Title?: string;
 }
 
 export const STATES = {

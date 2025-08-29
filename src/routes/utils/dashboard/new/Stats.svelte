@@ -5,7 +5,7 @@
   import { QuestionCircleSolid } from 'flowbite-svelte-icons';
   import type { StatsProps } from './types';
 
-  let { products, customers, title, popoverTitle, popoverDesc, tab1Title, tab2Title, tab3Title, tab4Title }: StatsProps = $props();
+  let { products, customers, title, popoverTitle, popoverDesc, tab1Title, tab2Title }: StatsProps = $props();
 </script>
 
 <Card size="xl" class="p-4 sm:p-6">
@@ -32,8 +32,7 @@
         {tab1Title}
       {/snippet}
       <ul class="-m-3 divide-y divide-gray-200 dark:divide-gray-700 dark:bg-gray-800">
-        {#each products as { src, image, label, price, change, nation,  ismok }}
-        {#if nation == 'kor'  && ismok == false}
+        {#each products as { src, image, label, price, change }}
           <li class="py-3 sm:py-4">
             <div class="flex items-center justify-between">
               <div class="flex min-w-0 items-center">
@@ -50,7 +49,6 @@
               </div>
             </div>
           </li>
-        {/if}
         {/each}
       </ul>
     </TabItem>
@@ -59,79 +57,23 @@
         {tab2Title}
       {/snippet}
       <ul class="-m-3 divide-y divide-gray-200 bg-white dark:divide-gray-700 dark:bg-gray-800">
-        {#each products as { src, image, label, price, change, nation, ismok }}
-        {#if nation == 'kor'  && ismok == true}
-          <li class="py-3 sm:py-4">
+        {#each customers as { email, name, avatar }}
+          <li class="py-3 sm:py-3.5">
             <div class="flex items-center justify-between">
               <div class="flex min-w-0 items-center">
-                <img class="h-10 w-10 flex-shrink-0" src={src ? imagesPath(src, 'products') : ''} alt={image} />
+                <Avatar src={avatar ? imagesPath(avatar, 'users') : ''} />
                 <div class="ml-3">
                   <p class="truncate font-medium text-gray-900 dark:text-white">
-                    {label}
+                    {name}
                   </p>
-                  <Change value={change} size="sm" equalHeight class="ml-px" />
+                  <span class="text-gray-500">{email}</span>
                 </div>
               </div>
               <div class="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">
-                {price}
+                ${Math.floor(Math.random() * 10000)}
               </div>
             </div>
           </li>
-        {/if}
-        {/each}
-      </ul>
-    </TabItem>
-    <TabItem class="w-full" open>
-      {#snippet titleSlot()}
-        {tab3Title}
-      {/snippet}
-      <ul class="-m-3 divide-y divide-gray-200 dark:divide-gray-700 dark:bg-gray-800">
-        {#each products as { src, image, label, price, change, nation, ismok }}
-        {#if nation == 'naq' && !ismok}
-          <li class="py-3 sm:py-4">
-            <div class="flex items-center justify-between">
-              <div class="flex min-w-0 items-center">
-                <img class="h-10 w-10 flex-shrink-0" src={src ? imagesPath(src, 'products') : ''} alt={image} />
-                <div class="ml-3">
-                  <p class="truncate font-medium text-gray-900 dark:text-white">
-                    {label}
-                  </p>
-                  <Change value={change} size="sm" equalHeight class="ml-px" />
-                </div>
-              </div>
-              <div class="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">
-                {price}
-              </div>
-            </div>
-          </li>
-        {/if}
-        {/each}
-      </ul>
-    </TabItem>
-    <TabItem class="w-full">
-      {#snippet titleSlot()}
-        {tab4Title}
-      {/snippet}
-      <ul class="-m-3 divide-y divide-gray-200 bg-white dark:divide-gray-700 dark:bg-gray-800">
-        {#each products as { src, image, label, price, change, nation, ismok }}
-        {#if nation == 'naq' && ismok}
-          <li class="py-3 sm:py-4">
-            <div class="flex items-center justify-between">
-              <div class="flex min-w-0 items-center">
-                <img class="h-10 w-10 flex-shrink-0" src={src ? imagesPath(src, 'products') : ''} alt={image} />
-                <div class="ml-3">
-                  <p class="truncate font-medium text-gray-900 dark:text-white">
-                    {label}
-                  </p>
-                  <Change value={change} size="sm" equalHeight class="ml-px" />
-                </div>
-              </div>
-              <div class="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">
-                {price}
-              </div>
-            </div>
-          </li>
-        {/if}
         {/each}
       </ul>
     </TabItem>

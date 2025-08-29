@@ -6,13 +6,12 @@
   import { DesktopPcOutline, MobilePhoneOutline, TabletOutline, ArrowRightOutline } from 'flowbite-svelte-icons';
   import { Chart, P, Button, Timeline, TimelineItem } from 'flowbite-svelte';
   import { ChartWidget, Stats, More, ActivityList, ProductMetricCard, CategorySalesReport, DarkChart, Traffic, getChartOptions } from '$lib';
-  import type { DeviceOption, ProductType } from '$lib/types';
+  import type { DeviceOption } from '$lib/types';
   import Chat from './Chat.svelte';
   import Insights from './Insights.svelte';
   import Transactions from './Transactions.svelte';
   import Customers from '../../data/users.json';
-    import { onMount } from 'svelte';
-  const IDCURL = import.meta.env.VITE_IDCURL; // 'http://xxx.xxx.xxx.xxx:4500' // ← 환경 변수에서 URL 가져오기
+
   const series = [
     {
       name: 'Revenue',
@@ -26,7 +25,43 @@
     }
   ];
 
-  let products: ProductType[] = $state([]);
+  const products = [
+    {
+      src: 'iphone.png',
+      image: 'iphone',
+      label: 'iPhone 14 Pro',
+      change: 2.5,
+      price: '$445,467'
+    },
+    {
+      src: 'imac.png',
+      image: 'imac',
+      label: 'Apple iMac 27',
+      change: 12.5,
+      price: '$256,982'
+    },
+    {
+      src: 'watch.png',
+      image: 'watch',
+      label: 'Apple Watch SE',
+      change: -1.35,
+      price: '$201,869'
+    },
+    {
+      src: 'ipad.png',
+      image: 'ipad',
+      label: 'Apple iPad Air',
+      change: 12.5,
+      price: '$103,967'
+    },
+    {
+      src: 'imac.png',
+      image: 'imac',
+      label: 'Apple iMac 24',
+      change: -2,
+      price: '$98,543 '
+    }
+  ];
   const customers = Customers.slice(0, 5);
 
   let chartOptions = $derived(getChartOptions(false));
@@ -36,79 +71,12 @@
   });
 
   let dark = $state(false);
-  let statsCont = $state({
+  const statsCont = {
     title: 'Statistics this month',
     popoverTitle: 'Statistics',
-    tab1Title: 'KOR',
-    tab2Title: 'KOR_MOK',
-    tab3Title: 'NAQ',
-    tab4Title: 'NAQ_MOK',
-  });
-
-  onMount(() => {
-    console.log('${}  IDCURL:', IDCURL);
-  });
-
-  async function changeTitle() {
-    try {
-      const res = await fetch(`${IDCURL}/info/accountlists`); // 실제 API URL
-      if (!res.ok) throw new Error('Failed to fetch products');
-      const data: any = await res.json();
-
-      const fetchedData = data; // ← 받아온 JSON
-
-      for (const outerKey in fetchedData) {
-        const innerObj = fetchedData[outerKey];
-
-        // 국가 코드 추출
-        const nation = outerKey.includes('kor')
-          ? 'kor'
-          : outerKey.includes('naq')
-          ? 'naq'
-          : 'jp';
-        const ismok = outerKey.includes('mok')
-          ? true
-          : false;
-
-        products.push({
-          src: 'iphone.png',
-          nation: nation,
-          ismok:ismok,
-          image: 'iphone',
-          label: `${outerKey}`,
-          change: Math.random() * 5 - 2.5, // -2.5 ~ 2.5
-          price: `$${Number( innerObj.a0.nowprice).toFixed(0)}`
-        });
-        // innerKey들 순회
-        // for (const innerKey in innerObj) {
-        //   products.push({
-        //     src: 'iphone.png',
-        //     nation: nation,
-        //     image: 'iphone',
-        //     label: `${outerKey}_${innerKey}`,
-        //     change: Math.random() * 5 - 2.5, // -2.5 ~ 2.5
-        //     price: `$${(Math.random() * 1000000).toFixed(0)}`
-        //   });
-        // }
-      }
-
-      console.log('Fetched products:', data); 
-      // products = data; // $state 감싼 변수에 값 대입
-    } catch (error) {
-      console.error('Error fetching products:', error);
-    }
-
-
-    // products = [
-    //   {
-    //     src: 'airpods.png',
-    //     image: 'airpods',
-    //     label: 'Apple AirPods Pro',
-    //     change: 5.5,
-    //     price: '$199,999'
-    //   }
-    // ];
-  }
+    tab1Title: 'Top products',
+    tab2Title: 'Top customers'
+  };
 
   const devices: DeviceOption[] = [
     {
@@ -141,10 +109,6 @@
 <div class="mt-px space-y-4">
   <div class="grid gap-4 xl:grid-cols-2 2xl:grid-cols-3">
     <ChartWidget value={12.5} {chartOptions} title="$45,385" subtitle="Sales this week" />
-    <button on:click={changeTitle}>
-    제목 변경하기
-    </button>
-   
     <Stats {products} {customers} {...statsCont}>
       {#snippet popoverDesc()}
         <P>Statistics is a branch of applied mathematics that involves the collection, description, analysis, and inference of conclusions from quantitative data.</P>
