@@ -6,10 +6,10 @@ interface MainChartColors {
   opacityFrom: number;
   opacityTo: number;
 }
-
+const originalSeries: number[][] = [];
 export default function getChartOptions(dark: boolean): ApexOptions {
   let mainChartColors: MainChartColors;
-
+  
   if (dark) {
     mainChartColors = {
       borderColor: '#374151',
@@ -27,6 +27,7 @@ export default function getChartOptions(dark: boolean): ApexOptions {
   }
 
   const options: ApexOptions = {
+    
     chart: {
       height: 420,
       type: 'area',
@@ -38,6 +39,7 @@ export default function getChartOptions(dark: boolean): ApexOptions {
     },
     fill: {
       type: 'gradient',
+      opacity: [1, 0.2, 0.2],
       gradient: {
         shade: 'light',
         type: 'vertical',
@@ -50,12 +52,25 @@ export default function getChartOptions(dark: boolean): ApexOptions {
     dataLabels: {
       enabled: false
     },
+    // tooltip: {
+    //   style: {
+    //     fontSize: '14px',
+    //     fontFamily: 'Inter, sans-serif'
+    //   }
+    // },
     tooltip: {
       style: {
         fontSize: '14px',
         fontFamily: 'Inter, sans-serif'
+      },
+      y: {
+        formatter: function (val, { seriesIndex, dataPointIndex }) {
+          // originalSeries는 보정 전 원본 데이터 배열
+          return originalSeries[seriesIndex][dataPointIndex].toLocaleString();
+        }
       }
     },
+
     grid: {
       show: true,
       borderColor: mainChartColors.borderColor,
@@ -130,6 +145,11 @@ export default function getChartOptions(dark: boolean): ApexOptions {
             labels: {
               show: false
             }
+          },
+          yaxis: {
+            labels: {
+              show: false
+            }
           }
         }
       }
@@ -138,3 +158,9 @@ export default function getChartOptions(dark: boolean): ApexOptions {
 
   return options;
 }
+
+export function setOriginalSeries(data: number[][]) {
+  originalSeries.length = 0;
+  originalSeries.push(...data);
+}
+

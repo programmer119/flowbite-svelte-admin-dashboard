@@ -4,6 +4,7 @@
   import { imagesPath } from './variables';
   import { QuestionCircleSolid } from 'flowbite-svelte-icons';
   import type { StatsProps } from './types';
+  import ProductList from './Productlist.svelte';
 
   let { products, customers, title, popoverTitle, popoverDesc, tab1Title, tab2Title, tab3Title, tab4Title }: StatsProps = $props();
 </script>
@@ -31,110 +32,30 @@
       {#snippet titleSlot()}
         {tab1Title}
       {/snippet}
-      <ul class="-m-3 divide-y divide-gray-200 dark:divide-gray-700 dark:bg-gray-800">
-        {#each products as { src, image, label, price, change, nation,  ismok }}
-        {#if nation == 'kor'  && ismok == false}
-          <li class="py-3 sm:py-4">
-            <div class="flex items-center justify-between">
-              <div class="flex min-w-0 items-center">
-                <img class="h-10 w-10 flex-shrink-0" src={src ? imagesPath(src, 'products') : ''} alt={image} />
-                <div class="ml-3">
-                  <p class="truncate font-medium text-gray-900 dark:text-white">
-                    {label}
-                  </p>
-                  <Change value={change} size="sm" equalHeight class="ml-px" />
-                </div>
-              </div>
-              <div class="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">
-                {price}
-              </div>
-            </div>
-          </li>
-        {/if}
-        {/each}
-      </ul>
+      <ProductList {products} nation="kor" ismok={false} />
     </TabItem>
+
     <TabItem class="w-full">
       {#snippet titleSlot()}
         {tab2Title}
       {/snippet}
-      <ul class="-m-3 divide-y divide-gray-200 bg-white dark:divide-gray-700 dark:bg-gray-800">
-        {#each products as { src, image, label, price, change, nation, ismok }}
-        {#if nation == 'kor'  && ismok == true}
-          <li class="py-3 sm:py-4">
-            <div class="flex items-center justify-between">
-              <div class="flex min-w-0 items-center">
-                <img class="h-10 w-10 flex-shrink-0" src={src ? imagesPath(src, 'products') : ''} alt={image} />
-                <div class="ml-3">
-                  <p class="truncate font-medium text-gray-900 dark:text-white">
-                    {label}
-                  </p>
-                  <Change value={change} size="sm" equalHeight class="ml-px" />
-                </div>
-              </div>
-              <div class="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">
-                {price}
-              </div>
-            </div>
-          </li>
-        {/if}
-        {/each}
-      </ul>
+      <ProductList {products} nation="kor" ismok={true} />
     </TabItem>
+
     <TabItem class="w-full" open>
       {#snippet titleSlot()}
         {tab3Title}
       {/snippet}
-      <ul class="-m-3 divide-y divide-gray-200 dark:divide-gray-700 dark:bg-gray-800">
-        {#each products as { src, image, label, price, change, nation, ismok }}
-        {#if nation == 'naq' && !ismok}
-          <li class="py-3 sm:py-4">
-            <div class="flex items-center justify-between">
-              <div class="flex min-w-0 items-center">
-                <img class="h-10 w-10 flex-shrink-0" src={src ? imagesPath(src, 'products') : ''} alt={image} />
-                <div class="ml-3">
-                  <p class="truncate font-medium text-gray-900 dark:text-white">
-                    {label}
-                  </p>
-                  <Change value={change} size="sm" equalHeight class="ml-px" />
-                </div>
-              </div>
-              <div class="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">
-                {price}
-              </div>
-            </div>
-          </li>
-        {/if}
-        {/each}
-      </ul>
+      <ProductList {products} nation="naq" ismok={false} />
     </TabItem>
+
     <TabItem class="w-full">
       {#snippet titleSlot()}
         {tab4Title}
       {/snippet}
-      <ul class="-m-3 divide-y divide-gray-200 bg-white dark:divide-gray-700 dark:bg-gray-800">
-        {#each products as { src, image, label, price, change, nation, ismok }}
-        {#if nation == 'naq' && ismok}
-          <li class="py-3 sm:py-4">
-            <div class="flex items-center justify-between">
-              <div class="flex min-w-0 items-center">
-                <img class="h-10 w-10 flex-shrink-0" src={src ? imagesPath(src, 'products') : ''} alt={image} />
-                <div class="ml-3">
-                  <p class="truncate font-medium text-gray-900 dark:text-white">
-                    {label}
-                  </p>
-                  <Change value={change} size="sm" equalHeight class="ml-px" />
-                </div>
-              </div>
-              <div class="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">
-                {price}
-              </div>
-            </div>
-          </li>
-        {/if}
-        {/each}
-      </ul>
+      <ProductList {products} nation="naq" ismok={true} />
     </TabItem>
+
   </Tabs>
 
   <div class="mt-4 flex items-center justify-between border-t border-gray-200 pt-3 sm:pt-6 dark:border-gray-700">
