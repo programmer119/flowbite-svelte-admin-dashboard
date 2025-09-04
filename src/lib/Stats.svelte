@@ -6,7 +6,7 @@
   import type { StatsProps } from './types';
   import ProductList from './Productlist.svelte';
 
-  let { products, customers, title, popoverTitle, popoverDesc, tab1Title, tab2Title, tab3Title, tab4Title }: StatsProps = $props();
+  let { products, customers, title, popoverTitle, popoverDesc, tab1Title, tab2Title, tab3Title, tab4Title, changedbid }: StatsProps = $props();
 </script>
 
 <Card size="xl" class="p-4 sm:p-6">
@@ -32,28 +32,28 @@
       {#snippet titleSlot()}
         {tab1Title}
       {/snippet}
-      <ProductList {products} nation="kor" ismok={false} />
+      <ProductList {products} nation="kor" ismok={false} changedbid={changedbid} />
     </TabItem>
 
     <TabItem class="w-full">
       {#snippet titleSlot()}
         {tab2Title}
       {/snippet}
-      <ProductList {products} nation="kor" ismok={true} />
+      <ProductList {products} nation="kor" ismok={true} changedbid={changedbid} />
     </TabItem>
 
     <TabItem class="w-full" open>
       {#snippet titleSlot()}
         {tab3Title}
       {/snippet}
-      <ProductList {products} nation="naq" ismok={false} />
+      <ProductList {products} nation="naq" ismok={false} changedbid={changedbid} />
     </TabItem>
 
     <TabItem class="w-full">
       {#snippet titleSlot()}
         {tab4Title}
       {/snippet}
-      <ProductList {products} nation="naq" ismok={true} />
+      <ProductList {products} nation="naq" ismok={true} changedbid={changedbid} />
     </TabItem>
 
   </Tabs>

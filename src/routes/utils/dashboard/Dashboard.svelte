@@ -17,9 +17,22 @@
   const IDCURL = import.meta.env.VITE_IDCURL; // 'http://xxx.xxx.xxx.xxx:4500' // ← 환경 변수에서 URL 가져오기
   const startdate = '20250625';
   const enddate = new Date().toISOString().slice(0, 10).replace(/-/g, '');
-  let products: ProductType[] = $state([]);
+  let products: any = $state({});
   const customers = Customers.slice(0, 5);
   let chartOptions = $state(getChartOptions(false));
+  let curdb_id = $state('srhsha_real_kor');
+  let initialized = false;
+  $effect(()=>{
+    console.log('curdb_id changed:', curdb_id);
+    if(!initialized)
+    {
+      initialized = true;
+      return
+    }
+    const id = curdb_id;
+    changeAccount(id);
+    
+  })
   //let chartoptionmap =$state([]);
   const chartoptionmap = new Map<string, Record<string, any>>();
   let dark = $state(false);
@@ -30,6 +43,7 @@
     tab2Title: 'KOR_MOK',
     tab3Title: 'NAQ',
     tab4Title: 'NAQ_MOK',
+    changedbid: ChangeDB_ID,
   });
 
 
@@ -43,10 +57,16 @@
     return data.map((v: number) => (v - min) / (max - min));
   }
 
+  async function GetTodayindexdatas(){
+    const res = await fetch(`${IDCURL}/info/todayindexdatalists`); // 실제 API URL
+    if (!res.ok) throw new Error('Failed to fetch todayindexdatalists');
+    const data = await res.json();
+    return data;
+  }
   let indexData: any = null;
   async function GetIndexdatas(db_id:string,ticker:string,startdate:string,enddate:string) {
     // const res = await fetch(`/mokdata/${ticker}.json`); // mokdata
-    //indexdatalists?db_id=srhsha_real_kor&ticker=u201&startdate=20250328&enddate=20250829
+    //indexdatalists?db_id=${curdb_id}&ticker=u201&startdate=20250328&enddate=20250829
     const res = await fetch(`${IDCURL}/info/indexdatalists?db_id=${db_id}&ticker=${ticker}&startdate=${startdate}&enddate=${enddate}`); // 실제 API URL
     if (!res.ok) throw new Error('Failed to fetch indexdatalists');
     indexData = await res.json();
@@ -63,7 +83,7 @@
     return indexData;
   }
 
-  async function changeCategories(db_id: string) {
+  async function changeAllSnapshot(db_id: string) {
 
     try {
       const res = await fetch(`${IDCURL}/info/snapshotaccountlists?db_id=${db_id}`); // 실제 API URL
@@ -207,7 +227,7 @@
     }
   }
 
-  async function changeTitle() {
+  async function changeAllAccounts() {
     try {
       const res = await fetch(`${IDCURL}/info/accountlists`); // 실제 API URL
       if (!res.ok) throw new Error('Failed to fetch products');
@@ -227,7 +247,7 @@
           ? true
           : false;
 
-        products.push({
+        products[outerKey]={
           src: 'iphone.png',
           nation: nation,
           ismok:ismok,
@@ -235,7 +255,7 @@
           label: `${outerKey}`,
           change: Math.random() * 5 - 2.5, // -2.5 ~ 2.5
           price: `$${Number( innerObj.a0.nowprice).toFixed(0)}`
-        });
+        };
         // innerKey들 순회
         // for (const innerKey in innerObj) {
         //   products.push({
@@ -249,22 +269,59 @@
         // }
       }
 
+      console.log('Fetched products:', products); 
+      // products = data; // $state 감싼 변수에 값 대입
+    } catch (error) {
+      console.error('Error fetching products:', error);
+    }
+  }
+
+  function ChangeDB_ID(db_id:string){
+    curdb_id = db_id;
+    console.log('ChangeDB_ID:', curdb_id);
+  }
+
+  async function changeAccount(dbid: string) {
+    try {
+      const res = await fetch(`${IDCURL}/info/accountrefresh?db_id=${dbid}`); // 실제 API URL
+      if (!res.ok) throw new Error('Failed to fetch products');
+      const data: any = await res.json();
+      const fetchedData = data; // ← 받아온 JSON
+
+      let accumvalue = 0;
+      for (const outerKey in fetchedData) {
+        const innerObj = fetchedData[outerKey];
+        
+        const value = Number(innerObj.amount) * ((outerKey != 'a0') ? innerObj.nowprice??0 : 1);
+        accumvalue += value;
+        // 국가 코드 추출
+        // const nation = outerKey.includes('kor')
+        //   ? 'kor'
+        //   : outerKey.includes('naq')
+        //   ? 'naq'
+        //   : 'jp';
+        // const ismok = outerKey.includes('mok')
+        //   ? true
+        //   : false;
+
+      }
+        products[dbid].price = accumvalue;  
+        // products[outerKey].push({
+        //   src: 'iphone.png',
+        //   nation: nation,
+        //   ismok:ismok,
+        //   image: 'iphone',
+        //   label: `${outerKey}`,
+        //   change: Math.random() * 5 - 2.5, // -2.5 ~ 2.5
+        //   price: `$${Number( innerObj.a0.nowprice).toFixed(0)}`
+        // });
+
       console.log('Fetched products:', data); 
       // products = data; // $state 감싼 변수에 값 대입
     } catch (error) {
       console.error('Error fetching products:', error);
     }
 
-
-    // products = [
-    //   {
-    //     src: 'airpods.png',
-    //     image: 'airpods',
-    //     label: 'Apple AirPods Pro',
-    //     change: 5.5,
-    //     price: '$199,999'
-    //   }
-    // ];
   }
 
   const devices: DeviceOption[] = [
@@ -298,11 +355,15 @@
 <div class="mt-px space-y-4">
   <div class="grid gap-4 xl:grid-cols-2 2xl:grid-cols-3">
     <ChartWidget value={12.5} {chartOptions} title="$45,385" subtitle="Sales this week" />
-    <button on:click={()=>changeCategories('srhsha_real_kor')}>
+    <button on:click={()=>changeAllSnapshot(curdb_id)}>
     일별계좌
     </button>
-    <button on:click={changeTitle}>
+    <button on:click={changeAllAccounts}>
     오늘계좌
+    </button>
+      
+    <button on:click={()=>{}}>
+      TEST
     </button>
     <!-- <button on:click={GetIndexdatas}>
     코스피

@@ -101,7 +101,7 @@ export type CustomerType = {
 };
 
 export interface StatsProps {
-  products: ProductType[];
+  products: Record<string, ProductType>;
   customers: CustomerType[];
   title?: string;
   popoverTitle?: string;
@@ -110,6 +110,7 @@ export interface StatsProps {
   tab2Title?: string;  
   tab3Title?: string;
   tab4Title?: string;
+  changedbid: (db_id:string)=>void;
 }
 
 export const STATES = {
