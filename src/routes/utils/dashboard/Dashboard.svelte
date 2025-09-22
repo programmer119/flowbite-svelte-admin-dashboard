@@ -306,6 +306,13 @@
 
       }
         products[dbid].price = accumvalue;  
+        const chartops = chartoptionmap.get(dbid);
+        const arrchartops = Object.entries(chartops ?? {});
+        const chartop = arrchartops[arrchartops.length-1];
+        products[dbid].change = ((accumvalue / chartop[1].a0.nowprice -1)*100).toFixed(2);
+        // Object.entries(chartops ?? {}).forEach(([key, value]) => {
+
+        // })
         // products[outerKey].push({
         //   src: 'iphone.png',
         //   nation: nation,
